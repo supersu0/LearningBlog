@@ -67,8 +67,32 @@ public AuthToken refresh(@PathVAriable("refreshToken") String refreshToken){
 //https://blog.csdn.net/walkerJong/article/details/7946109  @RequestParam @RequestBody @PathVariable 等参数绑定注解详解
 return adminService.refreshToken(refreshToken);
 }
-
-
+//Get some statistics about the count of poststhe count of comments,etc.
+@return counts   //	说明返回值类型
+//https://www.runoob.com/java/java-documentation.html  Java 文档注释
+@GetMapping("counts")
+@ApiOperation("Gets count info")
+public StatisticDTO getCount(){
+return adminService.getCount();
+}
+@GetMapping("environments")
+@ApiOperation("Get environments info")
+public EnvironmentDTO getEnvironments(){
+return adminService.getEnvironments();
+}
+@PutMapping("halo-admin")  
+@ApiOperation("Updates halo-admin manually")
+public void updateAdmin(){
+adminService.updateAdminAssets();
+}
+@GetMapping("spring/logs")
+@ApiOperation("get application logs")
+public BaseResponse<String> getSpringLogs(){
+return BaseResponse.ok(HttpStatus.OK.getReasonPhrase,adminService.getSpringLogs());
+//HttpStatus  https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/http/HttpStatus.html
+  
+  
+}
 
 }
 }
