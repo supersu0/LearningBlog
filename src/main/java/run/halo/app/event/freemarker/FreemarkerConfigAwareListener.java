@@ -39,8 +39,50 @@ this.userService = userService;
 @EventListener
 @Order(Order.HIGHEST_PRECEDENCE+1)  //最高优先级
 pulic void onApplicationStartedEvent(ApplicationStartedEvent applicationStartedEvent) throws TemplateModelException{
-//CONTINUE TO CODE ....
+log.debug("Recieived application started event")
+//https://blog.csdn.net/qq_15037231/article/details/79645503   如何使用 log.debug ()
+loadThemeConfig();
+loadOptionsConfig();
+loadUserConfig();
+  
 }
+@EventListener
+public void onThemeActivatedEvent(ThemeActivatedEvent themeActivatedEvent ) throws TemplateException{
+log.debug("Received theme activated event");
+loadThemeConfig();
+}
+@EventListener
+public void onUserUpdate(UserUpdatedEvent event )throws TemplateModelException{
+log.debug("Received user updated event,user id:[{}]",event.getUserId());
+loadUserConfig();
+@EventListener
+public void onOptionUpdate(OptioUpdatedEvent event) throws TemplateModelException{
+log.debug("Received option update event");
+loadOptionsConfig();
+loadThemeConfig();
+}
+private void loadUserConfig() throws TemplateModelException{
+configuration.setSharedVariable("user",userService.getCurrentUser().orElse(null));
+//http://freemarker.foofun.cn/pgui_config_sharedvariables.html
+log.debug("Loaded user");
+}
+private voidOptinos() throws TemplateModelException{
+configuration.setSharedVariable("options",optionService.listOptions());
+configuration.setSharedVariable("context",optionService.getBlogBaseUrl());
+configuration.setSharedVariab;e("version",HaloConst.HALOO_VERSION);
+log.debug("Loaded options");
+}
+private void loadThemeConfig() throws TemplateModelException{
+String baseUrl =optonService.getByPropertyDefault(OtherProperties.CDN_DOMIN,String.class,optionService.getBlogBaseUrl());
+//相当于得到运行时类
+ThemeProperty activatedTheme = themeService.getActivatedTheme();
+configuration.setSharedVariable("theme",activatedTheme);
+configuration.setSharedVariable("static",baseUrl+"/"+activatedTheme.getFolderName());
+configuration.setSharedVariable("settings",themeSettingService.listAsMapBy(themeService.getActivatedThemeId()));
+log.debug("Loaded theme and settings");
+}  
+}
+
 }
 
 }
